@@ -1,0 +1,42 @@
+@startuml
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam usecaseBackgroundColor #FFFFFF
+skinparam usecaseBorderColor #333333
+actor Alumno
+actor Docente
+actor Administrador
+rectangle "Sistema: Ruta del Programador" {
+ usecase "CU01 Seleccionar perfil" as CU01
+ usecase "CU02 Ver Mundos y Misiones" as CU02
+ usecase "CU03 Ver lección" as CU03
+ usecase "CU04 Resolver cuestionario" as CU04
+ usecase "CU05 Resolver actividad interactiva" as CU05
+ usecase "CU06 Registrar progreso" as CU06
+ usecase "CU07 Ver pista" as CU07
+ usecase "CU08 Ver progreso propio" as CU08
+ usecase "CU09 Ver progreso de alumnos" as CU09
+ usecase "CU10 Iniciar sesión" as CU10
+ usecase "CU11 Gestionar Mundos y Misiones" as CU11
+ usecase "CU12 Gestionar preguntas y actividades" as CU12
+ usecase "CU13 Gestionar alumnos" as CU13
+}
+Alumno -- CU01
+Alumno -- CU02
+Alumno -- CU03
+Alumno -- CU04
+Alumno -- CU05
+Alumno -- CU08
+Docente -- CU09
+Administrador -- CU11
+Administrador -- CU12
+Administrador -- CU13
+CU04 ..> CU06 : <<include>>
+CU05 ..> CU06 : <<include>>
+CU07 ..> CU05 : <<extend>>
+CU09 ..> CU10 : <<include>>
+CU11 ..> CU10 : <<include>>
+CU12 ..> CU10 : <<include>>
+CU13 ..> CU10 : <<include>>
+@enduml

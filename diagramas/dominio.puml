@@ -1,0 +1,67 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+hide circle
+hide methods
+title Modelo de dominio - Ruta del Programador
+class Mundo {
+nombre
+concepto
+orden
+}
+class Mision {
+titulo
+objetivoAprendizaje
+orden
+leccion
+actividadLudica
+}
+class FranjaEtaria {
+nombre
+edadMinima
+edadMaxima
+}
+class Pregunta {
+enunciado
+opciones
+respuestaCorrecta
+}
+class ActividadInteractiva {
+tipo
+consigna
+contenido
+}
+class Alumno {
+nombre
+apellido
+fechaNacimiento
+}
+class Progreso {
+fechaInicio
+fechaFinalizacion
+completada
+resultadoCuestionario
+}
+class ResultadoActividad {
+correcta
+intentos
+fecha
+}
+class Usuario {
+nombre
+rol
+}
+Mundo "1" -- "1..*" Mision : contiene >
+Mision "*" -- "1" FranjaEtaria : dirigida a >
+Alumno "*" -- "1" FranjaEtaria : pertenece a >
+Mision "1" -- "3" Pregunta : evalúa con >
+Mision "1" -- "5" ActividadInteractiva : consolida con >
+Alumno "1" -- "*" Progreso : registra >
+Progreso "*" -- "1" Mision : sobre >
+Progreso "1" -- "0..5" ResultadoActividad : incluye >
+ResultadoActividad "*" -- "1" ActividadInteractiva : corresponde a >
+Usuario "*" -- "*" Progreso : consulta >
+@enduml
