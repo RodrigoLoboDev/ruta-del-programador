@@ -7,14 +7,14 @@ import java.util.List;
 
 public class ProgresoDAO {
     /**
-     * Registra o actualiza la nota del cuestionario (RF07). Rendirlo de nuevo solo cambia la nota:
-     * no toca completada ni fecha_finalizacion.
+     * Registra la nota del cuestionario (RF07). Rendirlo de nuevo conserva la mejor nota (así quien ya
+     * aprobó no pierde el acceso a las actividades) y no toca completada ni fecha_finalizacion.
      */
     public void registrarCuestionario(int idAlumno, int idMision, int correctas) throws SQLException {
         String sql = """
             INSERT INTO progreso (id_alumno, id_mision, resultado_cuestionario)
             VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE resultado_cuestionario = VALUES(resultado_cuestionario)""";
+            ON DUPLICATE KEY UPDATE resultado_cuestionario = GREATEST(COALESCE(resultado_cuestionario, 0), VALUES(resultado_cuestionario))""";
         try (Connection c = ConexionBD.obtener();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idAlumno);
