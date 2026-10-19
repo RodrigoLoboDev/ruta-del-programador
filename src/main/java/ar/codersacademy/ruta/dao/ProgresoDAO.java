@@ -40,8 +40,11 @@ public class ProgresoDAO {
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
+                String alumno = rs.getString(1);
+                int completadas = rs.getInt(2);
                 double prom = rs.getDouble(3);
-                lista.add(new ResumenProgreso(rs.getString(1), rs.getInt(2), rs.wasNull() ? null : prom));
+                boolean sinCuestionarios = rs.wasNull(); // wasNull() refiere a la última columna leída
+                lista.add(new ResumenProgreso(alumno, completadas, sinCuestionarios ? null : prom));
             }
         }
         return lista;
