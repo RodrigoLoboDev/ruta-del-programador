@@ -45,11 +45,11 @@ INSERT INTO opcion_pregunta (id_pregunta, texto, es_correcta) VALUES
 
 INSERT INTO actividad_interactiva (id_mision, tipo, consigna, orden, contenido_json) VALUES
  (1, 'ARRASTRAR_SOLTAR', 'Ordená los pasos para cepillarte los dientes', 1,
-  '{"elementos":["Tomar el cepillo","Poner pasta","Cepillar","Enjuagar"],"ordenCorrecto":[0,1,2,3]}'),
+  '{"elementos":["Tomar el cepillo","Poner pasta","Cepillar","Enjuagar"],"ordenCorrecto":[0,1,2,3],"pista":"Pensá qué hacés primero y qué hacés al final."}'),
  (1, 'UNIR_FLECHAS', 'Uní cada paso con su dibujo', 2,
-  '{"pares":[["Poner pasta","pasta.png"],["Enjuagar","vaso.png"]]}'),
+  '{"pares":[["Poner pasta","pasta.png"],["Enjuagar","vaso.png"]],"pista":"Imaginá qué dibujo usarías para cada paso."}'),
  (1, 'COMPLETAR', 'Completá la definición', 3,
-  '{"texto":"Un algoritmo es una ___ de pasos","opciones":["secuencia","pelota"],"respuesta":"secuencia"}');
+  '{"texto":"Un algoritmo es una ___ de pasos","opciones":["secuencia","pelota"],"respuesta":"secuencia","pista":"Son pasos que van uno detrás del otro."}');
 
 INSERT INTO alumno (id_franja, nombre, apellido, fecha_nacimiento) VALUES
  (1, 'Martina', 'Pérez', '2017-05-12'),
@@ -64,7 +64,7 @@ INSERT INTO usuario (nombre, nombre_usuario, clave_hash, rol) VALUES
 INSERT INTO progreso (id_alumno, id_mision, fecha_finalizacion, completada, resultado_cuestionario) VALUES
  (1, 1, NOW(), TRUE, 3),
  (1, 2, NULL, FALSE, NULL),
- (2, 1, NOW(), TRUE, 2);
+ (2, 1, NULL, FALSE, 2);
 
 INSERT INTO resultado_actividad (id_progreso, id_actividad, correcta, intentos) VALUES
  (1, 1, TRUE, 1),
