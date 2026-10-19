@@ -65,15 +65,8 @@ public class RutaController {
         return correctas >= MINIMO_PARA_APROBAR;
     }
 
-    /** Registra la nota; devuelve si aprobó (aprobar habilita las actividades, no completa la Misión). */
-    public boolean registrarCuestionario(Alumno alumno, Mision mision, int correctas) throws SQLException {
-        boolean aprobado = apruebaCuestionario(correctas);
-        progresoDAO.registrarCuestionario(alumno.getId(), mision.getId(), correctas);
-        return aprobado;
-    }
-
     /**
-     * Corrige el cuestionario y registra la nota (CU04).
+     * Corrige el cuestionario y registra la nota (CU04). Aprobarlo habilita las actividades; no completa la Misión.
      * @param opcionesElegidas una opción (posición desde 0) por pregunta, en el orden de las preguntas
      */
     public ResultadoCuestionario rendirCuestionario(Alumno alumno, Mision mision, List<Integer> opcionesElegidas)
@@ -89,7 +82,9 @@ public class RutaController {
                 correctas++;
             }
         }
-        return new ResultadoCuestionario(correctas, registrarCuestionario(alumno, mision, correctas));
+        boolean aprobado = apruebaCuestionario(correctas);
+        progresoDAO.registrarCuestionario(alumno.getId(), mision.getId(), correctas);
+        return new ResultadoCuestionario(correctas, aprobado);
     }
 
     /** Las actividades solo se habilitan con el cuestionario de la Misión aprobado (CU05). */
