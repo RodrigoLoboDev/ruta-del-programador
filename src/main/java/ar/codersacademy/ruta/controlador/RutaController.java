@@ -11,10 +11,15 @@ import ar.codersacademy.ruta.modelo.ContenidoInvalidoException;
 import ar.codersacademy.ruta.modelo.Mision;
 import ar.codersacademy.ruta.modelo.Pregunta;
 import ar.codersacademy.ruta.modelo.ResumenProgreso;
+import ar.codersacademy.ruta.util.Algoritmos;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Queue;
 import java.util.Set;
 
@@ -29,6 +34,16 @@ public class RutaController {
 
     /** Qué pasó con la respuesta a una actividad (CU05, CU07). */
     public enum ResultadoRespuesta { CORRECTA, INCORRECTA, MISION_COMPLETADA, SALIO }
+
+    // Nombres sin distinguir mayúsculas ni tildes ("tomas gomez" == "Tomás Gómez").
+    private static final Collator COLLATOR_NOMBRES = Collator.getInstance(Locale.forLanguageTag("es-AR"));
+    static { COLLATOR_NOMBRES.setStrength(Collator.PRIMARY); }
+    private static final Comparator<ResumenProgreso> POR_NOMBRE =
+            (a, b) -> COLLATOR_NOMBRES.compare(a.alumno(), b.alumno());
+    private static final Comparator<ResumenProgreso> POR_MISIONES_COMPLETADAS = (a, b) -> {
+        int porMisiones = Integer.compare(b.misionesCompletadas(), a.misionesCompletadas());
+        return porMisiones != 0 ? porMisiones : POR_NOMBRE.compare(a, b);
+    };
 
     private final AlumnoDAO alumnoDAO = new AlumnoDAO();
     private final MisionDAO misionDAO = new MisionDAO();
@@ -155,7 +170,27 @@ public class RutaController {
         }
     }
 
-    public List<ResumenProgreso> progresoGeneral() throws SQLException { return progresoDAO.resumenPorAlumno(); }
+    /** Progreso de todos los alumnos ordenado por nombre, con ordenamiento por inserción propio (CU09). */
+    public List<ResumenProgreso> progresoPorNombre() throws SQLException {
+        List<ResumenProgreso> lista = new ArrayList<>(progresoDAO.resumenPorAlumno());
+        Algoritmos.ordenarPorInsercion(lista, POR_NOMBRE);
+        return lista;
+    }
+
+    /** Progreso de todos los alumnos, de más a menos Misiones completadas (desempata por nombre) (CU09). */
+    public List<ResumenProgreso> progresoPorMisiones() throws SQLException {
+        List<ResumenProgreso> lista = new ArrayList<>(progresoDAO.resumenPorAlumno());
+        Algoritmos.ordenarPorInsercion(lista, POR_MISIONES_COMPLETADAS);
+        return lista;
+    }
+
+    /** Busca a un alumno por nombre y apellido con búsqueda binaria sobre la lista ordenada por nombre; null si no está. */
+    public ResumenProgreso buscarAlumno(String nombreCompleto) throws SQLException {
+        List<ResumenProgreso> ordenada = progresoPorNombre();
+        ResumenProgreso buscado = new ResumenProgreso(nombreCompleto.trim(), 0, null);
+        int posicion = Algoritmos.buscarBinario(ordenada, buscado, POR_NOMBRE);
+        return posicion < 0 ? null : ordenada.get(posicion);
+    }
 
     /** Progreso propio del alumno (CU08). */
     public ResumenProgreso progresoDe(Alumno alumno) throws SQLException { return progresoDAO.resumenDe(alumno.getId()); }

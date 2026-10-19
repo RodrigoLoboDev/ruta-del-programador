@@ -195,10 +195,30 @@ public class ConsolaApp {
         System.out.println(r == null ? "Sin datos de progreso." : formatear(r));
     }
 
-    /** CU09. */
+    /** CU09: submenú del docente con la lista ordenada de dos maneras y la búsqueda por nombre. */
     private static void verProgresoDeAlumnos() throws SQLException {
-        System.out.println("\n--- Progreso de los alumnos (vista del docente) ---");
-        for (ResumenProgreso r : ctrl.progresoGeneral()) {
+        int opcion = -1;
+        while (opcion != 0) {
+            System.out.println("\n--- Progreso de los alumnos (vista del docente) ---");
+            System.out.println("1) Ordenado por nombre");
+            System.out.println("2) Ordenado por Misiones completadas");
+            System.out.println("3) Buscar un alumno por nombre");
+            System.out.println("0) Volver al menú principal");
+            opcion = leerEntero("Opción: ", 0, 3);
+            switch (opcion) {
+                case 1 -> mostrar(ctrl.progresoPorNombre());
+                case 2 -> mostrar(ctrl.progresoPorMisiones());
+                case 3 -> {
+                    System.out.print("Nombre y apellido: ");
+                    ResumenProgreso r = ctrl.buscarAlumno(in.nextLine());
+                    System.out.println(r == null ? "No se encontró a ese alumno." : formatear(r));
+                }
+            }
+        }
+    }
+
+    private static void mostrar(List<ResumenProgreso> resumenes) {
+        for (ResumenProgreso r : resumenes) {
             System.out.println(formatear(r));
         }
     }

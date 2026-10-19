@@ -95,7 +95,7 @@ public class ProgresoDAO {
         }
     }
 
-    /** Resumen del avance de todos los alumnos (RF09). */
+    /** Resumen del avance de todos los alumnos, sin orden garantizado: el controlador los ordena (RF09). */
     public List<ResumenProgreso> resumenPorAlumno() throws SQLException {
         return resumen(null);
     }
@@ -114,8 +114,7 @@ public class ProgresoDAO {
                    AVG(pr.resultado_cuestionario)
             FROM alumno a LEFT JOIN progreso pr ON pr.id_alumno = a.id_alumno
             WHERE a.activo = TRUE AND (? IS NULL OR a.id_alumno = ?)
-            GROUP BY a.id_alumno, a.nombre, a.apellido
-            ORDER BY 2 DESC""";
+            GROUP BY a.id_alumno, a.nombre, a.apellido""";
         List<ResumenProgreso> lista = new ArrayList<>();
         try (Connection c = ConexionBD.obtener();
              PreparedStatement ps = c.prepareStatement(sql)) {
