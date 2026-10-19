@@ -1,0 +1,178 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam packageStyle rectangle
+skinparam nodesep 20
+skinparam ranksep 60
+left to right direction
+hide circle
+title Diagrama de clases de diseño - Ruta del Programador
+
+package "vista" {
+  class ConsolaApp {
+    - ctrl : RutaController
+    - in : Scanner
+    - alumno : Alumno
+    - mision : Mision
+    + main(args : String[]) : void
+    - leerEntero(mensaje, min, max) : int
+  }
+}
+
+package "controlador" {
+  class RutaController {
+    + PREGUNTAS_POR_CUESTIONARIO : int = 3
+    + MINIMO_PARA_APROBAR : int = 2
+    - pendientes : Queue<ActividadInteractiva>
+    + alumnos() : List<Alumno>
+    + misionesDe(alumno) : List<Mision>
+    + cargarContenido(mision) : void
+    + rendirCuestionario(alumno, mision, opciones) : ResultadoCuestionario
+    + cuestionarioAprobado(alumno, mision) : boolean
+    + iniciarActividades(alumno, mision) : int
+    + actividadActual() : ActividadInteractiva
+    + responder(respuesta) : ResultadoRespuesta
+    + progresoPorNombre() : List<ResumenProgreso>
+    + progresoPorMisiones() : List<ResumenProgreso>
+    + buscarAlumno(nombre) : ResumenProgreso
+    + progresoDe(alumno) : ResumenProgreso
+  }
+  class ResultadoCuestionario <<record>> {
+    correctas : int
+    aprobado : boolean
+  }
+  enum ResultadoRespuesta {
+    CORRECTA
+    INCORRECTA
+    MISION_COMPLETADA
+    SALIO
+  }
+}
+
+package "modelo" {
+  class Alumno {
+    - id : int {final}
+    - nombre : String
+    - apellido : String
+    - idFranja : int {final}
+    + setNombre(nombre) : void
+    + setApellido(apellido) : void
+  }
+  class Mision {
+    - id : int {final}
+    - mundo : String
+    - titulo : String
+    - leccion : String
+    + setContenido(leccion, preguntas, actividades) : void
+  }
+  class Pregunta {
+    - id : int {final}
+    - enunciado : String
+    - opciones : List<String>
+    + esCorrecta(indice) : boolean
+  }
+  abstract class ActividadInteractiva {
+    - id : int {final}
+    - consigna : String
+    - pista : String
+    + {abstract} getInstrucciones() : String
+    + {abstract} getElementos() : List<String>
+    + {abstract} validar(respuesta) : boolean
+  }
+  class ActividadOrdenar {
+    - elementos : List<String>
+    - ordenCorrecto : List<Integer>
+    + validar(respuesta) : boolean
+  }
+  class ActividadUnir {
+    - izquierda : List<String>
+    - derecha : List<String>
+    + validar(respuesta) : boolean
+  }
+  class ActividadCompletar {
+    - texto : String
+    - opciones : List<String>
+    - respuestaCorrecta : String
+    + validar(respuesta) : boolean
+  }
+  class ResumenProgreso <<record>> {
+    alumno : String
+    misionesCompletadas : int
+    promedioCuestionario : Double
+  }
+  class ContenidoInvalidoException {
+    + ContenidoInvalidoException(mensaje)
+  }
+}
+
+package "dao" {
+  class ConexionBD {
+    + {static} obtener() : Connection
+  }
+  class AlumnoDAO {
+    + listarActivos() : List<Alumno>
+  }
+  class MisionDAO {
+    + listarPorFranja(idFranja) : List<Mision>
+    + obtenerLeccion(idMision) : String
+  }
+  class PreguntaDAO {
+    + listarPorMision(idMision) : List<Pregunta>
+  }
+  class ActividadDAO {
+    + listarPorMision(idMision) : List<ActividadInteractiva>
+    - crearActividad(tipo, ...) : ActividadInteractiva
+  }
+  class ProgresoDAO {
+    + registrarCuestionario(idAlumno, idMision, correctas) : void
+    + registrarActividad(idAlumno, idMision, idActividad, correcta) : void
+    + marcarCompletada(idAlumno, idMision) : void
+    + resumenPorAlumno() : List<ResumenProgreso>
+  }
+}
+
+package "util" {
+  class Algoritmos <<utility>> {
+    + {static} ordenarPorInsercion(lista, criterio) : void
+    + {static} buscarBinario(lista, buscado, criterio) : int
+  }
+}
+
+ActividadOrdenar --|> ActividadInteractiva
+ActividadUnir --|> ActividadInteractiva
+ActividadCompletar --|> ActividadInteractiva
+ContenidoInvalidoException --|> Exception
+
+Mision "1" *-- "3" Pregunta
+Mision "1" *-- "3..5" ActividadInteractiva
+
+ConsolaApp --> RutaController : usa
+ConsolaApp ..> ActividadInteractiva : solo la abstracta
+RutaController --> "1" AlumnoDAO
+RutaController --> "1" MisionDAO
+RutaController --> "1" PreguntaDAO
+RutaController --> "1" ActividadDAO
+RutaController --> "1" ProgresoDAO
+RutaController ..> Algoritmos : ordena y busca
+RutaController --> "0..*" ActividadInteractiva : cola de pendientes
+RutaController ..> ResultadoCuestionario
+RutaController ..> ResultadoRespuesta
+
+AlumnoDAO ..> ConexionBD
+MisionDAO ..> ConexionBD
+PreguntaDAO ..> ConexionBD
+ActividadDAO ..> ConexionBD
+ProgresoDAO ..> ConexionBD
+
+AlumnoDAO ..> Alumno : crea
+MisionDAO ..> Mision : crea
+PreguntaDAO ..> Pregunta : crea
+ActividadDAO ..> ActividadInteractiva : crea (Factory)
+ProgresoDAO ..> ResumenProgreso : crea
+
+Mision ..> ContenidoInvalidoException : lanza
+ActividadDAO ..> ContenidoInvalidoException : lanza
+@enduml
