@@ -47,7 +47,7 @@ INSERT INTO actividad_interactiva (id_mision, tipo, consigna, orden, contenido_j
  (1, 'ARRASTRAR_SOLTAR', 'Ordená los pasos para cepillarte los dientes', 1,
   '{"elementos":["Tomar el cepillo","Poner pasta","Cepillar","Enjuagar"],"ordenCorrecto":[0,1,2,3],"pista":"Pensá qué hacés primero y qué hacés al final."}'),
  (1, 'UNIR_FLECHAS', 'Uní cada paso con su dibujo', 2,
-  '{"pares":[["Poner pasta","pasta.png"],["Enjuagar","vaso.png"]],"pista":"Imaginá qué dibujo usarías para cada paso."}'),
+  '{"pares":[["Poner pasta","pasta.png"],["Enjuagar","vaso.png"],["Cepillar","cepillo.png"]],"pista":"Imaginá qué dibujo usarías para cada paso."}'),
  (1, 'COMPLETAR', 'Completá la definición', 3,
   '{"texto":"Un algoritmo es una ___ de pasos","opciones":["secuencia","pelota"],"respuesta":"secuencia","pista":"Son pasos que van uno detrás del otro."}');
 
