@@ -39,6 +39,7 @@ public class ActividadCompletar extends ActividadInteractiva {
 
     @Override
     public boolean validar(String respuesta) {
+        if (respuesta == null) return false;
         int numero;
         try {
             numero = Integer.parseInt(respuesta.trim());
