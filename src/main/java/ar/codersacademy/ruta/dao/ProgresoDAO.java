@@ -97,24 +97,38 @@ public class ProgresoDAO {
 
     /** Resumen del avance de todos los alumnos (RF09). */
     public List<ResumenProgreso> resumenPorAlumno() throws SQLException {
+        return resumen(null);
+    }
+
+    /** Resumen del avance de un alumno (CU08); null si no existe o está dado de baja. */
+    public ResumenProgreso resumenDe(int idAlumno) throws SQLException {
+        List<ResumenProgreso> lista = resumen(idAlumno);
+        return lista.isEmpty() ? null : lista.get(0);
+    }
+
+    /** Resumen de todos los alumnos activos, o solo del indicado si {@code idAlumno} no es null. */
+    private List<ResumenProgreso> resumen(Integer idAlumno) throws SQLException {
         String sql = """
             SELECT CONCAT(a.nombre, ' ', a.apellido),
                    COUNT(CASE WHEN pr.completada THEN 1 END),
                    AVG(pr.resultado_cuestionario)
             FROM alumno a LEFT JOIN progreso pr ON pr.id_alumno = a.id_alumno
-            WHERE a.activo = TRUE
+            WHERE a.activo = TRUE AND (? IS NULL OR a.id_alumno = ?)
             GROUP BY a.id_alumno, a.nombre, a.apellido
             ORDER BY 2 DESC""";
         List<ResumenProgreso> lista = new ArrayList<>();
         try (Connection c = ConexionBD.obtener();
-             PreparedStatement ps = c.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String alumno = rs.getString(1);
-                int completadas = rs.getInt(2);
-                double prom = rs.getDouble(3);
-                boolean sinCuestionarios = rs.wasNull(); // wasNull() refiere a la última columna leída
-                lista.add(new ResumenProgreso(alumno, completadas, sinCuestionarios ? null : prom));
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setObject(1, idAlumno);
+            ps.setObject(2, idAlumno);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String alumno = rs.getString(1);
+                    int completadas = rs.getInt(2);
+                    double prom = rs.getDouble(3);
+                    boolean sinCuestionarios = rs.wasNull(); // wasNull() refiere a la última columna leída
+                    lista.add(new ResumenProgreso(alumno, completadas, sinCuestionarios ? null : prom));
+                }
             }
         }
         return lista;
