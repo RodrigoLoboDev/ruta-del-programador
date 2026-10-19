@@ -34,10 +34,12 @@ Misión se completa al terminar sus actividades. La opción 6 muestra el progres
 nombre o por Misiones completadas, y búsqueda por nombre). Solo la Misión 1 de la franja de 7 a 10 años tiene contenido cargado.
 
 ## Diagramas
-Los `.puml` son la fuente y los `.png` se regeneran con PlantUML (requiere Graphviz). `plantuml.jar` va en `lib/` (no se versiona):
+Los `.puml` son la fuente y los `.png` se regeneran con PlantUML (requiere Graphviz). `plantuml.jar` va en `tools/`, fuera del
+classpath del programa, y no se versiona:
 ```bash
-curl -fsSL -o lib/plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2026.9/plantuml.jar
-java -jar lib/plantuml.jar -tpng diagramas/*.puml
+mkdir -p tools
+curl -fsSL -o tools/plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2026.9/plantuml.jar
+java -jar tools/plantuml.jar -tpng diagramas/clases_diseno.puml
 ```
 `clases_diseno.puml` es el diagrama de clases del código (paquetes modelo, dao, controlador, vista y util); `dominio.puml` es el
 modelo de dominio y no incluye clases de implementación.
