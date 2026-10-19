@@ -24,6 +24,9 @@ public class ConsolaApp {
     private static final RutaController ctrl = new RutaController();
     private static final Scanner in = new Scanner(System.in);
 
+    // El detalle técnico de ContenidoInvalidoException no se muestra: la usa un chico, no un desarrollador.
+    private static final String MENSAJE_MISION_SIN_CONTENIDO = "Esta Misión todavía no está lista, ¡probá con otra!";
+
     private static Alumno alumno = null;
     private static Mision mision = null;
 
@@ -46,7 +49,7 @@ public class ConsolaApp {
                         case 0 -> System.out.println("¡Hasta la próxima!");
                     }
                 } catch (ContenidoInvalidoException e) {
-                    System.out.println("No se puede abrir la Misión: " + e.getMessage());
+                    System.out.println(MENSAJE_MISION_SIN_CONTENIDO);
                 } catch (SQLException e) {
                     System.out.println("Error de base de datos: " + e.getMessage());
                 }
@@ -103,7 +106,7 @@ public class ConsolaApp {
             mision = elegida;
             System.out.println("Misión elegida: " + mision.getTitulo());
         } catch (ContenidoInvalidoException e) {
-            System.out.println("Esa Misión todavía no se puede jugar: " + e.getMessage());
+            System.out.println(MENSAJE_MISION_SIN_CONTENIDO);
         }
     }
 
