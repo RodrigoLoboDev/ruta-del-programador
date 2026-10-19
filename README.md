@@ -39,9 +39,9 @@ classpath del programa, y no se versiona:
 ```bash
 mkdir -p tools
 curl -fsSL -o tools/plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2026.9/plantuml.jar
-java -jar tools/plantuml.jar -tpng diagramas/clases_diseno.puml
+java -jar tools/plantuml.jar -tpng diagramas/clases_diseno.puml diagramas/secuencia_cuestionario.puml
 ```
-`clases_diseno.puml` es el diagrama de clases del código (paquetes modelo, dao, controlador, vista y util); `dominio.puml` es el
+`secuencia_cuestionario.puml` es el diagrama de secuencia de CU04 (Resolver cuestionario). `clases_diseno.puml` es el diagrama de clases del código (paquetes modelo, dao, controlador, vista y util); `dominio.puml` es el
 modelo de dominio y no incluye clases de implementación.
 
 ## Demostración

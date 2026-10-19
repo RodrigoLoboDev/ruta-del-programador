@@ -1,0 +1,60 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign center
+skinparam noteBackgroundColor #FFFFFF
+skinparam noteBorderColor #333333
+title Diagrama de secuencia - CU04 Resolver cuestionario
+
+actor Alumno
+participant ":ConsolaApp\n(vista)" as Vista
+participant ":RutaController\n(controlador)" as Ctrl
+participant ":Pregunta\n(modelo)" as Preg
+participant ":ProgresoDAO\n(dao)" as DAO
+database "MySQL\nprogreso" as BD
+
+Alumno -> Vista : opción 4 (Resolver cuestionario)
+Vista -> Ctrl : cuestionarioAprobado(alumno, mision)
+Ctrl -> DAO : obtenerResultadoCuestionario(idAlumno, idMision)
+DAO -> BD : SELECT resultado_cuestionario
+BD --> DAO : nota (o NULL)
+DAO --> Ctrl : Integer nota
+Ctrl --> Vista : aprobado = nota != null && nota >= 2
+
+alt el cuestionario ya estaba aprobado
+  Vista -> Vista : "Ya aprobaste el cuestionario" y va\ndirecto a resolverActividades() (CU05)
+else todavía no aprobado
+  loop por cada una de las 3 preguntas de la Misión
+    Vista -> Alumno : enunciado y opciones numeradas
+    Alumno --> Vista : número de opción
+    note right of Vista : leerEntero() repite si no es un número\no está fuera de rango
+  end
+
+  Vista -> Ctrl : rendirCuestionario(alumno, mision, opcionesElegidas)
+  Ctrl -> Ctrl : cargarContenido(mision)\n(si todavía no estaba cargado)
+
+  loop por cada pregunta
+    Ctrl -> Preg : esCorrecta(opcionElegida)
+    Preg --> Ctrl : true / false
+    note right of Ctrl : suma 1 a correctas si es true
+  end
+
+  Ctrl -> Ctrl : aprobado = apruebaCuestionario(correctas)\n(regla: correctas >= 2 de 3)
+  Ctrl -> DAO : registrarCuestionario(idAlumno, idMision, correctas)
+  DAO -> BD : INSERT ... ON DUPLICATE KEY UPDATE\nresultado_cuestionario = GREATEST(COALESCE(resultado_cuestionario, 0), nuevo)
+  note right of BD : conserva la mejor nota.\nNo toca completada ni fecha_finalizacion.
+  BD --> DAO : filas afectadas
+  DAO --> Ctrl : void
+  Ctrl --> Vista : ResultadoCuestionario(correctas, aprobado)
+
+  Vista -> Alumno : "Respondiste bien X de 3."
+
+  alt aprobado (2 o 3 correctas)
+    Vista -> Alumno : "¡Cuestionario aprobado! Se habilitan las actividades."
+    Vista -> Vista : resolverActividades() (CU05)
+    note over Vista, BD : Aprobar habilita las actividades interactivas.\nLa Misión NO se completa acá: se completa al terminar sus actividades.
+  else no aprobado (0 o 1 correctas)
+    Vista -> Alumno : "Casi: repasá la lección (opción 3) y volvé a intentarlo."
+  end
+end
+@enduml
