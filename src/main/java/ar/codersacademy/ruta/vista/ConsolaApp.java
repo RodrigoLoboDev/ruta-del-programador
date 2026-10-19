@@ -36,8 +36,8 @@ public class ConsolaApp {
 
             System.out.print("¿Cuántas respuestas correctas tuviste en el cuestionario (0 a 3)? ");
             int correctas = Integer.parseInt(in.nextLine().trim());
-            boolean completada = ctrl.registrarCuestionario(alumno, mision, correctas);
-            System.out.println(completada ? "¡Misión completada!" : "Casi: repasá la lección y volvé a intentarlo.");
+            boolean aprobado = ctrl.registrarCuestionario(alumno, mision, correctas);
+            System.out.println(aprobado ? "¡Cuestionario aprobado! Ya podés hacer las actividades." : "Casi: repasá la lección y volvé a intentarlo.");
 
             System.out.println("\n--- Progreso de los alumnos (vista del docente) ---");
             for (ResumenProgreso r : ctrl.progresoGeneral()) {

@@ -24,7 +24,7 @@ public class RutaController {
         return misionDAO.listarPorFranja(alumno.getIdFranja());
     }
 
-    /** Regla de negocio: la Misión se completa con al menos 2 de 3 respuestas correctas. */
+    /** Regla de negocio: el cuestionario se aprueba con al menos 2 de 3 respuestas correctas. */
     public static boolean apruebaCuestionario(int correctas) {
         if (correctas < 0 || correctas > PREGUNTAS_POR_CUESTIONARIO) {
             throw new IllegalArgumentException("Cantidad de respuestas correctas fuera de rango: " + correctas);
@@ -32,10 +32,11 @@ public class RutaController {
         return correctas >= MINIMO_PARA_APROBAR;
     }
 
+    /** Registra la nota; devuelve si aprobó (aprobar habilita las actividades, no completa la Misión). */
     public boolean registrarCuestionario(Alumno alumno, Mision mision, int correctas) throws SQLException {
-        boolean completada = apruebaCuestionario(correctas);
-        progresoDAO.registrarCuestionario(alumno.getId(), mision.getId(), correctas, completada);
-        return completada;
+        boolean aprobado = apruebaCuestionario(correctas);
+        progresoDAO.registrarCuestionario(alumno.getId(), mision.getId(), correctas);
+        return aprobado;
     }
 
     public List<ResumenProgreso> progresoGeneral() throws SQLException { return progresoDAO.resumenPorAlumno(); }

@@ -25,4 +25,16 @@ public class MisionDAO {
         }
         return lista;
     }
+
+    /** Texto de la lección de una Misión; null si la Misión no existe (CU03). */
+    public String obtenerLeccion(int idMision) throws SQLException {
+        String sql = "SELECT leccion FROM mision WHERE id_mision = ?";
+        try (Connection c = ConexionBD.obtener();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idMision);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString(1) : null;
+            }
+        }
+    }
 }

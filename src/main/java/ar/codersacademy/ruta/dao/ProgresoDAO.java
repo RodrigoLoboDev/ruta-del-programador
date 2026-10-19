@@ -6,21 +6,91 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProgresoDAO {
-    /** Registra o actualiza el progreso de un alumno en una Misión (RF07). */
-    public void registrarCuestionario(int idAlumno, int idMision, int correctas, boolean completada) throws SQLException {
+    /**
+     * Registra o actualiza la nota del cuestionario (RF07). Rendirlo de nuevo solo cambia la nota:
+     * no toca completada ni fecha_finalizacion.
+     */
+    public void registrarCuestionario(int idAlumno, int idMision, int correctas) throws SQLException {
         String sql = """
-            INSERT INTO progreso (id_alumno, id_mision, resultado_cuestionario, completada, fecha_finalizacion)
-            VALUES (?, ?, ?, ?, IF(?, NOW(), NULL))
-            ON DUPLICATE KEY UPDATE resultado_cuestionario = VALUES(resultado_cuestionario),
-                                    completada = VALUES(completada),
-                                    fecha_finalizacion = VALUES(fecha_finalizacion)""";
+            INSERT INTO progreso (id_alumno, id_mision, resultado_cuestionario)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE resultado_cuestionario = VALUES(resultado_cuestionario)""";
         try (Connection c = ConexionBD.obtener();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, idAlumno);
             ps.setInt(2, idMision);
             ps.setInt(3, correctas);
-            ps.setBoolean(4, completada);
-            ps.setBoolean(5, completada);
+            ps.executeUpdate();
+        }
+    }
+
+    /** Nota del cuestionario del alumno en la Misión; null si todavía no lo rindió (CU04). */
+    public Integer obtenerResultadoCuestionario(int idAlumno, int idMision) throws SQLException {
+        String sql = "SELECT resultado_cuestionario FROM progreso WHERE id_alumno = ? AND id_mision = ?";
+        try (Connection c = ConexionBD.obtener();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idAlumno);
+            ps.setInt(2, idMision);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                int nota = rs.getInt(1);
+                return rs.wasNull() ? null : nota;
+            }
+        }
+    }
+
+    /**
+     * Registra un intento de actividad (RF07): suma un intento y, una vez correcta, la actividad
+     * queda correcta. Requiere que el alumno ya tenga progreso en la Misión (cuestionario rendido).
+     */
+    public void registrarActividad(int idAlumno, int idMision, int idActividad, boolean correcta) throws SQLException {
+        String sql = """
+            INSERT INTO resultado_actividad (id_progreso, id_actividad, correcta, intentos)
+            SELECT id_progreso, ?, ?, 1 FROM progreso WHERE id_alumno = ? AND id_mision = ?
+            ON DUPLICATE KEY UPDATE correcta = (correcta OR VALUES(correcta)),
+                                    intentos = LEAST(intentos + 1, 127),
+                                    fecha = NOW()""";
+        try (Connection c = ConexionBD.obtener();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idActividad);
+            ps.setBoolean(2, correcta);
+            ps.setInt(3, idAlumno);
+            ps.setInt(4, idMision);
+            ps.executeUpdate();
+        }
+    }
+
+    /** Ids de las actividades de la Misión que el alumno ya resolvió bien (CU05). */
+    public List<Integer> actividadesCorrectas(int idAlumno, int idMision) throws SQLException {
+        String sql = """
+            SELECT ra.id_actividad
+            FROM resultado_actividad ra JOIN progreso pr ON pr.id_progreso = ra.id_progreso
+            WHERE pr.id_alumno = ? AND pr.id_mision = ? AND ra.correcta""";
+        List<Integer> ids = new ArrayList<>();
+        try (Connection c = ConexionBD.obtener();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idAlumno);
+            ps.setInt(2, idMision);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt(1));
+                }
+            }
+        }
+        return ids;
+    }
+
+    /** Marca la Misión como completada al terminar sus actividades (RF07); conserva la fecha si ya lo estaba. */
+    public void marcarCompletada(int idAlumno, int idMision) throws SQLException {
+        String sql = """
+            UPDATE progreso SET completada = TRUE, fecha_finalizacion = COALESCE(fecha_finalizacion, NOW())
+            WHERE id_alumno = ? AND id_mision = ?""";
+        try (Connection c = ConexionBD.obtener();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idAlumno);
+            ps.setInt(2, idMision);
             ps.executeUpdate();
         }
     }
