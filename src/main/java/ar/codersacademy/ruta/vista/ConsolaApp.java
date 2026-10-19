@@ -20,16 +20,16 @@ public class ConsolaApp {
             List<Alumno> alumnos = ctrl.alumnos();
             for (int i = 0; i < alumnos.size(); i++) {
                 Alumno a = alumnos.get(i);
-                System.out.printf("%d) %s %s%n", i + 1, a.nombre(), a.apellido());
+                System.out.printf("%d) %s %s%n", i + 1, a.getNombre(), a.getApellido());
             }
             System.out.print("Seleccioná tu perfil: ");
             Alumno alumno = alumnos.get(Integer.parseInt(in.nextLine().trim()) - 1);
 
             List<Mision> misiones = ctrl.misionesDe(alumno);
-            System.out.println("\nMisiones disponibles para " + alumno.nombre() + ":");
+            System.out.println("\nMisiones disponibles para " + alumno.getNombre() + ":");
             for (int i = 0; i < misiones.size(); i++) {
                 Mision m = misiones.get(i);
-                System.out.printf("%d) Mundo %d %s - Misión %d: %s%n", i + 1, m.ordenMundo(), m.mundo(), m.orden(), m.titulo());
+                System.out.printf("%d) Mundo %d %s - Misión %d: %s%n", i + 1, m.getOrdenMundo(), m.getMundo(), m.getOrden(), m.getTitulo());
             }
             System.out.print("Elegí una Misión: ");
             Mision mision = misiones.get(Integer.parseInt(in.nextLine().trim()) - 1);

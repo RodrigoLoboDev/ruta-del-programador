@@ -21,7 +21,7 @@ public class RutaController {
     public List<Alumno> alumnos() throws SQLException { return alumnoDAO.listarActivos(); }
 
     public List<Mision> misionesDe(Alumno alumno) throws SQLException {
-        return misionDAO.listarPorFranja(alumno.idFranja());
+        return misionDAO.listarPorFranja(alumno.getIdFranja());
     }
 
     /** Regla de negocio: la Misión se completa con al menos 2 de 3 respuestas correctas. */
@@ -34,7 +34,7 @@ public class RutaController {
 
     public boolean registrarCuestionario(Alumno alumno, Mision mision, int correctas) throws SQLException {
         boolean completada = apruebaCuestionario(correctas);
-        progresoDAO.registrarCuestionario(alumno.id(), mision.id(), correctas, completada);
+        progresoDAO.registrarCuestionario(alumno.getId(), mision.getId(), correctas, completada);
         return completada;
     }
 
