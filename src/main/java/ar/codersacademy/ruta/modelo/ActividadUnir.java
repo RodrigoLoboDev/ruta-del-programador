@@ -1,15 +1,24 @@
 package ar.codersacademy.ruta.modelo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
-/** Actividad UNIR_FLECHAS en consola: unir cada elemento numerado con su par rotulado con letras. */
+/** Actividad UNIR_FLECHAS en consola: unir cada elemento numerado con su par, rotulado con letras y mezclado. */
 public class ActividadUnir extends ActividadInteractiva {
     private final List<String> izquierda;
     private final List<String> derecha;
+    private final List<Integer> mostrado; // mostrado.get(l) = índice del par cuyo correspondiente se ve en la letra l
 
-    /** @param pares cada par es {elemento, su correspondiente}; el correspondiente se muestra en orden inverso */
+    /** @param pares cada par es {elemento, su correspondiente}; los correspondientes se muestran mezclados */
     public ActividadUnir(int id, String consigna, int orden, String pista, List<List<String>> pares)
+            throws ContenidoInvalidoException {
+        this(id, consigna, orden, pista, pares, new Random());
+    }
+
+    /** @param azar fuente del mezclado; con una semilla fija el orden mostrado es repetible (pruebas) */
+    public ActividadUnir(int id, String consigna, int orden, String pista, List<List<String>> pares, Random azar)
             throws ContenidoInvalidoException {
         super(id, consigna, orden, pista);
         if (pares == null || pares.size() < 2) {
@@ -26,6 +35,16 @@ public class ActividadUnir extends ActividadInteractiva {
         }
         this.izquierda = List.copyOf(izq);
         this.derecha = List.copyOf(der);
+        List<Integer> posiciones = new ArrayList<>();
+        List<Integer> yaResuelto = new ArrayList<>();
+        for (int i = 0; i < izquierda.size(); i++) {
+            posiciones.add(i);
+            yaResuelto.add(i);
+        }
+        do {
+            Collections.shuffle(posiciones, azar);
+        } while (posiciones.equals(yaResuelto)); // no mostrar cada par enfrentado a su correspondiente
+        this.mostrado = List.copyOf(posiciones);
     }
 
     @Override
@@ -39,8 +58,8 @@ public class ActividadUnir extends ActividadInteractiva {
         for (int i = 0; i < izquierda.size(); i++) {
             lineas.add((i + 1) + ") " + izquierda.get(i));
         }
-        for (int j = 0; j < derecha.size(); j++) {
-            lineas.add((char) ('A' + j) + ") " + derecha.get(derecha.size() - 1 - j));
+        for (int l = 0; l < derecha.size(); l++) {
+            lineas.add((char) ('A' + l) + ") " + derecha.get(mostrado.get(l)));
         }
         return lineas;
     }
@@ -71,8 +90,7 @@ public class ActividadUnir extends ActividadInteractiva {
                 return false;
             }
             int indiceIzq = numero - 1;
-            int indiceDer = derecha.size() - 1 - letra;
-            if (unido[indiceIzq] || indiceIzq != indiceDer) {
+            if (unido[indiceIzq] || mostrado.get(letra) != indiceIzq) {
                 return false;
             }
             unido[indiceIzq] = true;
