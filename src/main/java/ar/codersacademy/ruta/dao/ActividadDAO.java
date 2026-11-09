@@ -13,7 +13,7 @@ public class ActividadDAO {
     private final ObjectMapper mapper = new ObjectMapper();
 
     /** Actividades interactivas de una Misión, en orden, leyendo su contenido_json con Jackson (CU05). */
-    public List<ActividadInteractiva> listarPorMision(int idMision) throws SQLException, ContenidoInvalidoException {
+    public List<ActividadInteractiva> listarPorMision(int idMision) throws PersistenciaException, ContenidoInvalidoException {
         String sql = """
             SELECT id_actividad, tipo, consigna, orden, contenido_json
             FROM actividad_interactiva
@@ -35,6 +35,8 @@ public class ActividadDAO {
                     lista.add(crearActividad(rs.getString(2), rs.getInt(1), rs.getString(3), rs.getInt(4), json));
                 }
             }
+        } catch (SQLException e) {
+            throw new PersistenciaException("No se pudieron obtener las actividades de la Misión", e);
         }
         return lista;
     }

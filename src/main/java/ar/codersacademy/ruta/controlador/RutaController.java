@@ -9,10 +9,10 @@ import ar.codersacademy.ruta.modelo.ActividadInteractiva;
 import ar.codersacademy.ruta.modelo.Alumno;
 import ar.codersacademy.ruta.modelo.ContenidoInvalidoException;
 import ar.codersacademy.ruta.modelo.Mision;
+import ar.codersacademy.ruta.modelo.PersistenciaException;
 import ar.codersacademy.ruta.modelo.Pregunta;
 import ar.codersacademy.ruta.modelo.ResumenProgreso;
 import ar.codersacademy.ruta.util.Algoritmos;
-import java.sql.SQLException;
 import java.text.Collator;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -56,14 +56,14 @@ public class RutaController {
     private Alumno alumnoEnCurso;
     private Mision misionEnCurso;
 
-    public List<Alumno> alumnos() throws SQLException { return alumnoDAO.listarActivos(); }
+    public List<Alumno> alumnos() throws PersistenciaException { return alumnoDAO.listarActivos(); }
 
-    public List<Mision> misionesDe(Alumno alumno) throws SQLException {
+    public List<Mision> misionesDe(Alumno alumno) throws PersistenciaException {
         return misionDAO.listarPorFranja(alumno.getIdFranja());
     }
 
     /** Carga lección, preguntas y actividades de la Misión si todavía no están (CU03). */
-    public void cargarContenido(Mision mision) throws SQLException, ContenidoInvalidoException {
+    public void cargarContenido(Mision mision) throws PersistenciaException, ContenidoInvalidoException {
         if (mision.getLeccion() != null) {
             return;
         }
@@ -85,7 +85,7 @@ public class RutaController {
      * @param opcionesElegidas una opción (posición desde 0) por pregunta, en el orden de las preguntas
      */
     public ResultadoCuestionario rendirCuestionario(Alumno alumno, Mision mision, List<Integer> opcionesElegidas)
-            throws SQLException, ContenidoInvalidoException {
+            throws PersistenciaException, ContenidoInvalidoException {
         cargarContenido(mision);
         List<Pregunta> preguntas = mision.getPreguntas();
         if (opcionesElegidas.size() != preguntas.size()) {
@@ -103,7 +103,7 @@ public class RutaController {
     }
 
     /** Las actividades solo se habilitan con el cuestionario de la Misión aprobado (CU05). */
-    public boolean cuestionarioAprobado(Alumno alumno, Mision mision) throws SQLException {
+    public boolean cuestionarioAprobado(Alumno alumno, Mision mision) throws PersistenciaException {
         Integer nota = progresoDAO.obtenerResultadoCuestionario(alumno.getId(), mision.getId());
         return nota != null && apruebaCuestionario(nota);
     }
@@ -113,7 +113,7 @@ public class RutaController {
      * @return cuántas quedan; si ninguna, la Misión se da por completada
      * @throws IllegalStateException si el cuestionario no está aprobado
      */
-    public int iniciarActividades(Alumno alumno, Mision mision) throws SQLException, ContenidoInvalidoException {
+    public int iniciarActividades(Alumno alumno, Mision mision) throws PersistenciaException, ContenidoInvalidoException {
         exigirCuestionarioAprobado(alumno, mision);
         cargarContenido(mision);
         Set<Integer> resueltas = new HashSet<>(progresoDAO.actividadesCorrectas(alumno.getId(), mision.getId()));
@@ -141,7 +141,7 @@ public class RutaController {
      * Si es incorrecta la actividad vuelve al final de la cola; si escribe "salir" se corta la sesión
      * (lo ya resuelto queda guardado); al vaciarse la cola la Misión se completa.
      */
-    public ResultadoRespuesta responder(String respuesta) throws SQLException {
+    public ResultadoRespuesta responder(String respuesta) throws PersistenciaException {
         if (pendientes.isEmpty()) {
             throw new IllegalStateException("No hay una actividad en curso");
         }
@@ -150,42 +150,45 @@ public class RutaController {
             return ResultadoRespuesta.SALIO;
         }
         exigirCuestionarioAprobado(alumnoEnCurso, misionEnCurso);
-        ActividadInteractiva actividad = pendientes.poll();
+        // La actividad sale de la cola recién después de guardar: si la base falla, sigue pendiente y se reintenta.
+        ActividadInteractiva actividad = pendientes.peek();
         boolean correcta = actividad.validar(respuesta);
         progresoDAO.registrarActividad(alumnoEnCurso.getId(), misionEnCurso.getId(), actividad.getId(), correcta);
         if (!correcta) {
-            pendientes.add(actividad);
+            pendientes.add(pendientes.poll());
             return ResultadoRespuesta.INCORRECTA;
         }
-        if (pendientes.isEmpty()) {
+        if (pendientes.size() == 1) {
             progresoDAO.marcarCompletada(alumnoEnCurso.getId(), misionEnCurso.getId());
+            pendientes.poll();
             return ResultadoRespuesta.MISION_COMPLETADA;
         }
+        pendientes.poll();
         return ResultadoRespuesta.CORRECTA;
     }
 
-    private void exigirCuestionarioAprobado(Alumno alumno, Mision mision) throws SQLException {
+    private void exigirCuestionarioAprobado(Alumno alumno, Mision mision) throws PersistenciaException {
         if (!cuestionarioAprobado(alumno, mision)) {
             throw new IllegalStateException("Hay que aprobar el cuestionario antes de hacer las actividades");
         }
     }
 
     /** Progreso de todos los alumnos ordenado por nombre, con ordenamiento por inserción propio (CU09). */
-    public List<ResumenProgreso> progresoPorNombre() throws SQLException {
+    public List<ResumenProgreso> progresoPorNombre() throws PersistenciaException {
         List<ResumenProgreso> lista = new ArrayList<>(progresoDAO.resumenPorAlumno());
         Algoritmos.ordenarPorInsercion(lista, POR_NOMBRE);
         return lista;
     }
 
     /** Progreso de todos los alumnos, de más a menos Misiones completadas (desempata por nombre) (CU09). */
-    public List<ResumenProgreso> progresoPorMisiones() throws SQLException {
+    public List<ResumenProgreso> progresoPorMisiones() throws PersistenciaException {
         List<ResumenProgreso> lista = new ArrayList<>(progresoDAO.resumenPorAlumno());
         Algoritmos.ordenarPorInsercion(lista, POR_MISIONES_COMPLETADAS);
         return lista;
     }
 
     /** Busca a un alumno por nombre y apellido con búsqueda binaria sobre la lista ordenada por nombre; null si no está. */
-    public ResumenProgreso buscarAlumno(String nombreCompleto) throws SQLException {
+    public ResumenProgreso buscarAlumno(String nombreCompleto) throws PersistenciaException {
         List<ResumenProgreso> ordenada = progresoPorNombre();
         ResumenProgreso buscado = new ResumenProgreso(nombreCompleto.trim(), 0, null);
         int posicion = Algoritmos.buscarBinario(ordenada, buscado, POR_NOMBRE);
@@ -193,5 +196,5 @@ public class RutaController {
     }
 
     /** Progreso propio del alumno (CU08). */
-    public ResumenProgreso progresoDe(Alumno alumno) throws SQLException { return progresoDAO.resumenDe(alumno.getId()); }
+    public ResumenProgreso progresoDe(Alumno alumno) throws PersistenciaException { return progresoDAO.resumenDe(alumno.getId()); }
 }

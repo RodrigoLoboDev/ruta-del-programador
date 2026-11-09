@@ -1,6 +1,7 @@
 package ar.codersacademy.ruta.dao;
 
 import ar.codersacademy.ruta.modelo.ContenidoInvalidoException;
+import ar.codersacademy.ruta.modelo.PersistenciaException;
 import ar.codersacademy.ruta.modelo.Pregunta;
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class PreguntaDAO {
     /** Preguntas del cuestionario de una Misión con sus opciones, en orden (CU04). */
-    public List<Pregunta> listarPorMision(int idMision) throws SQLException, ContenidoInvalidoException {
+    public List<Pregunta> listarPorMision(int idMision) throws PersistenciaException, ContenidoInvalidoException {
         String sql = """
             SELECT p.id_pregunta, p.enunciado, o.texto, o.es_correcta
             FROM pregunta p JOIN opcion_pregunta o ON o.id_pregunta = p.id_pregunta
@@ -42,6 +43,8 @@ public class PreguntaDAO {
                     lista.add(crearPregunta(idActual, enunciado, opciones, correcta));
                 }
             }
+        } catch (SQLException e) {
+            throw new PersistenciaException("No se pudo obtener el cuestionario de la Misión", e);
         }
         return lista;
     }

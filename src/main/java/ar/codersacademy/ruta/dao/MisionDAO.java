@@ -1,13 +1,14 @@
 package ar.codersacademy.ruta.dao;
 
 import ar.codersacademy.ruta.modelo.Mision;
+import ar.codersacademy.ruta.modelo.PersistenciaException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MisionDAO {
     /** Misiones disponibles para una franja etaria, ordenadas por Mundo y Misión (RF02). */
-    public List<Mision> listarPorFranja(int idFranja) throws SQLException {
+    public List<Mision> listarPorFranja(int idFranja) throws PersistenciaException {
         String sql = """
             SELECT mi.id_mision, m.nombre, m.orden, mi.titulo, mi.orden
             FROM mision mi JOIN mundo m ON m.id_mundo = mi.id_mundo
@@ -22,12 +23,14 @@ public class MisionDAO {
                     lista.add(new Mision(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getInt(5)));
                 }
             }
+        } catch (SQLException e) {
+            throw new PersistenciaException("No se pudieron obtener las Misiones", e);
         }
         return lista;
     }
 
     /** Texto de la lección de una Misión; null si la Misión no existe (CU03). */
-    public String obtenerLeccion(int idMision) throws SQLException {
+    public String obtenerLeccion(int idMision) throws PersistenciaException {
         String sql = "SELECT leccion FROM mision WHERE id_mision = ?";
         try (Connection c = ConexionBD.obtener();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -35,6 +38,8 @@ public class MisionDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? rs.getString(1) : null;
             }
+        } catch (SQLException e) {
+            throw new PersistenciaException("No se pudo obtener la lección de la Misión", e);
         }
     }
 }

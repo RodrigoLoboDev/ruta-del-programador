@@ -7,9 +7,9 @@ import ar.codersacademy.ruta.modelo.ActividadInteractiva;
 import ar.codersacademy.ruta.modelo.Alumno;
 import ar.codersacademy.ruta.modelo.ContenidoInvalidoException;
 import ar.codersacademy.ruta.modelo.Mision;
+import ar.codersacademy.ruta.modelo.PersistenciaException;
 import ar.codersacademy.ruta.modelo.Pregunta;
 import ar.codersacademy.ruta.modelo.ResumenProgreso;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -50,8 +50,8 @@ public class ConsolaApp {
                     }
                 } catch (ContenidoInvalidoException e) {
                     System.out.println(MENSAJE_MISION_SIN_CONTENIDO);
-                } catch (SQLException e) {
-                    System.out.println("Error de base de datos: " + e.getMessage());
+                } catch (PersistenciaException e) {
+                    System.out.println(e.getMessage());
                 }
             }
         } catch (NoSuchElementException e) {
@@ -74,7 +74,7 @@ public class ConsolaApp {
     }
 
     /** CU01. */
-    private static void seleccionarPerfil() throws SQLException {
+    private static void seleccionarPerfil() throws PersistenciaException {
         List<Alumno> alumnos = ctrl.alumnos();
         for (int i = 0; i < alumnos.size(); i++) {
             System.out.printf("%d) %s%n", i + 1, alumnos.get(i));
@@ -85,7 +85,7 @@ public class ConsolaApp {
     }
 
     /** CU02: lista las Misiones de la franja del alumno, agrupadas por Mundo, y deja elegir una. */
-    private static void verMundosYMisiones() throws SQLException {
+    private static void verMundosYMisiones() throws PersistenciaException {
         if (!hayPerfil()) {
             return;
         }
@@ -120,7 +120,7 @@ public class ConsolaApp {
     }
 
     /** CU04: si ya está aprobado va directo a las actividades; si aprueba ahora, también. */
-    private static void resolverCuestionario() throws SQLException, ContenidoInvalidoException {
+    private static void resolverCuestionario() throws PersistenciaException, ContenidoInvalidoException {
         if (!hayMision()) {
             return;
         }
@@ -151,7 +151,7 @@ public class ConsolaApp {
     }
 
     /** CU05 a CU07: presenta cada actividad igual, sin importar su tipo; la actividad interpreta la respuesta. */
-    private static void resolverActividades() throws SQLException, ContenidoInvalidoException {
+    private static void resolverActividades() throws PersistenciaException, ContenidoInvalidoException {
         if (!hayMision()) {
             return;
         }
@@ -186,7 +186,7 @@ public class ConsolaApp {
     }
 
     /** CU08. */
-    private static void verProgresoPropio() throws SQLException {
+    private static void verProgresoPropio() throws PersistenciaException {
         if (!hayPerfil()) {
             return;
         }
@@ -196,7 +196,7 @@ public class ConsolaApp {
     }
 
     /** CU09: submenú del docente con la lista ordenada de dos maneras y la búsqueda por nombre. */
-    private static void verProgresoDeAlumnos() throws SQLException {
+    private static void verProgresoDeAlumnos() throws PersistenciaException {
         int opcion = -1;
         while (opcion != 0) {
             System.out.println("\n--- Progreso de los alumnos (vista del docente) ---");
