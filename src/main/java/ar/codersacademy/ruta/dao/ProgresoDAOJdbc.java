@@ -1,8 +1,10 @@
 package ar.codersacademy.ruta.dao;
 
+import ar.codersacademy.ruta.modelo.DetalleMision;
 import ar.codersacademy.ruta.modelo.PersistenciaException;
 import ar.codersacademy.ruta.modelo.ResumenProgreso;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +112,37 @@ public class ProgresoDAOJdbc implements ProgresoDAO {
         } catch (SQLException e) {
             throw new PersistenciaException("No se pudo marcar la Misión como completada", e);
         }
+    }
+
+    /** Una fila por Misión con progreso del alumno: nota, estado, fecha y actividades resueltas sobre el total. */
+    @Override
+    public List<DetalleMision> detallePorMision(int idAlumno) throws PersistenciaException {
+        String sql = """
+            SELECT mi.titulo, pr.resultado_cuestionario, pr.completada, pr.fecha_finalizacion,
+                   (SELECT COUNT(*) FROM resultado_actividad ra
+                    WHERE ra.id_progreso = pr.id_progreso AND ra.correcta),
+                   (SELECT COUNT(*) FROM actividad_interactiva ai WHERE ai.id_mision = mi.id_mision)
+            FROM progreso pr
+            JOIN mision mi ON mi.id_mision = pr.id_mision
+            JOIN mundo mu ON mu.id_mundo = mi.id_mundo
+            WHERE pr.id_alumno = ?
+            ORDER BY mu.orden, mi.orden""";
+        List<DetalleMision> lista = new ArrayList<>();
+        try (Connection c = ConexionBD.obtener();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idAlumno);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int nota = rs.getInt(2);
+                    Integer notaCuestionario = rs.wasNull() ? null : nota; // wasNull() justo después de leer la columna
+                    lista.add(new DetalleMision(rs.getString(1), notaCuestionario, rs.getBoolean(3),
+                            rs.getObject(4, LocalDateTime.class), rs.getInt(5), rs.getInt(6)));
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("No se pudo obtener el detalle del progreso", e);
+        }
+        return lista;
     }
 
     /** Resumen del avance de todos los alumnos, sin orden garantizado: el controlador los ordena (RF09). */

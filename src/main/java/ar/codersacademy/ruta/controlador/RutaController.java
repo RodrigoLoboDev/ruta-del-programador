@@ -8,11 +8,16 @@ import ar.codersacademy.ruta.dao.ProgresoDAO;
 import ar.codersacademy.ruta.modelo.ActividadInteractiva;
 import ar.codersacademy.ruta.modelo.Alumno;
 import ar.codersacademy.ruta.modelo.ContenidoInvalidoException;
+import ar.codersacademy.ruta.modelo.DetalleMision;
 import ar.codersacademy.ruta.modelo.Mision;
 import ar.codersacademy.ruta.modelo.PersistenciaException;
 import ar.codersacademy.ruta.modelo.Pregunta;
 import ar.codersacademy.ruta.modelo.ResumenProgreso;
 import ar.codersacademy.ruta.util.Algoritmos;
+import ar.codersacademy.ruta.util.ExportadorCSV;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Collator;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -28,6 +33,7 @@ public class RutaController {
     public static final int PREGUNTAS_POR_CUESTIONARIO = Mision.PREGUNTAS_POR_CUESTIONARIO;
     public static final int MINIMO_PARA_APROBAR = 2;
     public static final String PALABRA_SALIR = "salir";
+    private static final Path DIRECTORIO_EXPORTACION = Path.of("exportaciones");
 
     /** Resultado de rendir el cuestionario (CU04). */
     public record ResultadoCuestionario(int correctas, boolean aprobado) {}
@@ -203,6 +209,19 @@ public class RutaController {
         ResumenProgreso buscado = new ResumenProgreso(nombreCompleto.trim(), 0, null);
         int posicion = Algoritmos.buscarBinario(ordenada, buscado, POR_NOMBRE);
         return posicion < 0 ? null : ordenada.get(posicion);
+    }
+
+    /**
+     * Exporta el avance del alumno, una fila por Misión, a exportaciones/progreso-alumno-{id}.csv (se pisa en cada
+     * exportación). Crea la carpeta si no existe.
+     * @return la ruta del archivo generado
+     */
+    public Path exportarProgreso(Alumno alumno) throws PersistenciaException, IOException {
+        List<DetalleMision> detalle = progresoDAO.detallePorMision(alumno.getId());
+        Files.createDirectories(DIRECTORIO_EXPORTACION);
+        Path destino = DIRECTORIO_EXPORTACION.resolve("progreso-alumno-" + alumno.getId() + ".csv");
+        ExportadorCSV.escribir(destino, ExportadorCSV.ENCABEZADOS, ExportadorCSV.armarFilas(detalle));
+        return destino;
     }
 
     /** Progreso propio del alumno (CU08). */

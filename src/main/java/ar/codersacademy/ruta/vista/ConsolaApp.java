@@ -15,6 +15,8 @@ import ar.codersacademy.ruta.modelo.Mision;
 import ar.codersacademy.ruta.modelo.PersistenciaException;
 import ar.codersacademy.ruta.modelo.Pregunta;
 import ar.codersacademy.ruta.modelo.ResumenProgreso;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -43,7 +45,7 @@ public class ConsolaApp {
         try {
             while (opcion != 0) {
                 mostrarMenu();
-                opcion = leerEntero("Opción: ", 0, 7);
+                opcion = leerEntero("Opción: ", 0, 8);
                 try {
                     switch (opcion) {
                         case 1 -> seleccionarPerfil();
@@ -53,12 +55,15 @@ public class ConsolaApp {
                         case 5 -> resolverActividades();
                         case 6 -> verProgresoPropio();
                         case 7 -> verProgresoDeAlumnos();
+                        case 8 -> exportarProgreso();
                         case 0 -> System.out.println("¡Hasta la próxima!");
                     }
                 } catch (ContenidoInvalidoException e) {
                     System.out.println(MENSAJE_MISION_SIN_CONTENIDO);
                 } catch (PersistenciaException e) {
                     System.out.println(e.getMessage());
+                } catch (IOException e) {
+                    System.out.println("No se pudo guardar el archivo: " + e.getMessage());
                 }
             }
         } catch (NoSuchElementException e) {
@@ -77,6 +82,7 @@ public class ConsolaApp {
         System.out.println("5) Resolver actividades");
         System.out.println("6) Ver mi progreso");
         System.out.println("7) Ver progreso de los alumnos (docente)");
+        System.out.println("8) Exportar mi progreso a CSV");
         System.out.println("0) Salir");
     }
 
@@ -200,6 +206,15 @@ public class ConsolaApp {
         ResumenProgreso r = ctrl.progresoDe(alumno);
         System.out.println("\n--- Mi progreso ---");
         System.out.println(r == null ? "Sin datos de progreso." : formatear(r));
+    }
+
+    /** Exportación opcional del TP4: guarda el avance del alumno por Misión en un CSV. */
+    private static void exportarProgreso() throws PersistenciaException, IOException {
+        if (!hayPerfil()) {
+            return;
+        }
+        Path archivo = ctrl.exportarProgreso(alumno);
+        System.out.println("Tu progreso se guardó en: " + archivo);
     }
 
     /** CU09: submenú del docente con la lista ordenada de dos maneras y la búsqueda por nombre. */

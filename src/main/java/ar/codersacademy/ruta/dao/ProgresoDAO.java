@@ -1,5 +1,6 @@
 package ar.codersacademy.ruta.dao;
 
+import ar.codersacademy.ruta.modelo.DetalleMision;
 import ar.codersacademy.ruta.modelo.PersistenciaException;
 import ar.codersacademy.ruta.modelo.ResumenProgreso;
 import java.util.List;
@@ -26,4 +27,7 @@ public interface ProgresoDAO {
 
     /** Resumen del avance de un alumno (CU08); null si no existe o está dado de baja. */
     ResumenProgreso resumenDe(int idAlumno) throws PersistenciaException;
+
+    /** Avance del alumno en cada Misión que ya empezó, ordenado por Mundo y Misión (exportación del TP4). */
+    List<DetalleMision> detallePorMision(int idAlumno) throws PersistenciaException;
 }
