@@ -47,7 +47,10 @@ Se agregó sobre la Entrega 3:
 `exportaciones/progreso-alumno-{id}.csv` (una fila por Misión: nota del cuestionario, si está completada, fecha y actividades
 correctas), con separador `;` y UTF-8 con BOM para abrirlo en Excel. La carpeta `exportaciones/` no se versiona.
 
-**Video de la demostración:** _(pendiente: pegar acá el enlace)_
+**Video de la demostración:** <https://youtu.be/KtIEwzMHO9w>. El mismo video está en `docs/video/LOBO-RODRIGO-AP4-video.mp4`.
+
+**Capturas y wireframes:** las capturas de las pruebas (exportación a CSV, el CSV abierto en una planilla y el error con MySQL
+apagado) están en `docs/capturas/`; los wireframes de las Figuras 7.1 a 7.3 y su fuente `.drawio`, en `diagramas/wireframes/`.
 
 **Mejora futura:** la conexión (URL, usuario y clave) sigue en `dao/ConexionBD.java`; se podría leer de un `config.properties`.
 

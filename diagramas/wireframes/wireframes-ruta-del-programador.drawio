@@ -1,0 +1,119 @@
+<mxfile host="app.diagrams.net" pages="3">
+  <diagram name="7.1" id="nCHUVsg-QdWr2nvkIpVH">
+    <mxGraphModel dx="1174" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="RspbEfAuFWlKkpKsVT67-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="320" width="400" x="214" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="RspbEfAuFWlKkpKsVT67-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Ruta del Programador&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="400" x="214" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="RspbEfAuFWlKkpKsVT67-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;¿Quién va a jugar hoy?&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="230" x="299" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="RspbEfAuFWlKkpKsVT67-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=3;" value="Tomás Gómez" vertex="1">
+          <mxGeometry height="35" width="300" x="264" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="RspbEfAuFWlKkpKsVT67-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Lucía Díaz" vertex="1">
+          <mxGeometry height="35" width="300" x="264" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="RspbEfAuFWlKkpKsVT67-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Martina Pérez" vertex="1">
+          <mxGeometry height="35" width="300" x="264" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="RspbEfAuFWlKkpKsVT67-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="ENTRAR" vertex="1">
+          <mxGeometry height="35" width="120" x="470" y="510" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="CTlKiBRKUQcLkDTNkz70" name="7.2">
+    <mxGraphModel dx="1174" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6vZODsIYruELu3qA5HN8-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="320" width="400" x="214" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="6vZODsIYruELu3qA5HN8-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Ruta del Programador - Hola, Tomás&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="400" x="214" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Elegí una Misión&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="230" x="299" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Mundo 1: Algoritmos&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="340" x="244" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;" value="✔ Pasos para cepillarse los dientes   (completada)" vertex="1">
+          <mxGeometry height="30" width="300" x="284" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;" value="○ Misión 2   (pendiente)" vertex="1">
+          <mxGeometry height="30" width="300" x="284" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;Mundo 2: Secuencias&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="340" x="244" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;" value="🔒 Misión 1   (bloqueada)" vertex="1">
+          <mxGeometry height="30" width="300" x="284" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="&lt;b&gt;VOLVER&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="120" x="230" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="qZ3R_HFs65T116MnZlbG-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="&lt;b&gt;JUGAR&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="120" x="480" y="560" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="fU_Ge3Qm_fqpeU_XE4JG" name="7.3">
+    <mxGraphModel dx="679" dy="438" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="320" width="400" x="214" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;font-size: 20px;&quot;&gt;Pasos para cepillarse los dientes&lt;/span&gt;" vertex="1">
+          <mxGeometry height="40" width="400" x="214" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Actividad 1 de 3 - Ordená los pasos&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="301" x="263.5" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Enjuagar la boca" vertex="1">
+          <mxGeometry height="30" width="260" x="263.5" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Poner pasta en el cepillo" vertex="1">
+          <mxGeometry height="30" width="260" x="263.5" y="438" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Mojar el cepillo" vertex="1">
+          <mxGeometry height="30" width="260" x="263.5" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Cepillar los dientes" vertex="1">
+          <mxGeometry height="30" width="260" x="263.5" y="532" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="↑↓" vertex="1">
+          <mxGeometry height="30" width="30" x="539.5" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="↑↓" vertex="1">
+          <mxGeometry height="30" width="30" x="539.5" y="438" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="↑↓" vertex="1">
+          <mxGeometry height="30" width="30" x="539.5" y="485" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="↑↓" vertex="1">
+          <mxGeometry height="30" width="30" x="539.5" y="532" as="geometry" />
+        </mxCell>
+        <mxCell id="6dp0OuE8u_ifWQ7j_MM5-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;" value="💡 Pista: ¿qué hacés antes de poner la pasta?" vertex="1">
+          <mxGeometry height="40" width="340" x="244" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="riFu9mDvNN1ZAfjPJk_7-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="&lt;b&gt;SALIR&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="120" x="229" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="riFu9mDvNN1ZAfjPJk_7-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="&lt;b&gt;VERIFICAR&lt;/b&gt;" vertex="1">
+          <mxGeometry height="35" width="120" x="479" y="640" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
