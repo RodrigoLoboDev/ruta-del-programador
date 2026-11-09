@@ -18,6 +18,7 @@ package "vista" {
     - alumno : Alumno
     - mision : Mision
     + main(args : String[]) : void
+    - exportarProgreso() : void
     - leerEntero(mensaje, min, max) : int
   }
 }
@@ -27,6 +28,7 @@ package "controlador" {
     + PREGUNTAS_POR_CUESTIONARIO : int = 3
     + MINIMO_PARA_APROBAR : int = 2
     - pendientes : Queue<ActividadInteractiva>
+    + RutaController(alumnoDAO, misionDAO, preguntaDAO, actividadDAO, progresoDAO)
     + alumnos() : List<Alumno>
     + misionesDe(alumno) : List<Mision>
     + cargarContenido(mision) : void
@@ -39,6 +41,7 @@ package "controlador" {
     + progresoPorMisiones() : List<ResumenProgreso>
     + buscarAlumno(nombre) : ResumenProgreso
     + progresoDe(alumno) : ResumenProgreso
+    + exportarProgreso(alumno) : Path
   }
   class ResultadoCuestionario <<record>> {
     correctas : int
@@ -103,8 +106,21 @@ package "modelo" {
     misionesCompletadas : int
     promedioCuestionario : Double
   }
+  class DetalleMision <<record>> {
+    mision : String
+    notaCuestionario : Integer
+    completada : boolean
+    fechaFinalizacion : LocalDateTime
+    actividadesCorrectas : int
+    actividadesTotales : int
+  }
   class ContenidoInvalidoException {
     + ContenidoInvalidoException(mensaje)
+    + ContenidoInvalidoException(mensaje, causa)
+  }
+  class PersistenciaException {
+    + PersistenciaException(mensaje)
+    + PersistenciaException(mensaje, causa)
   }
 }
 
@@ -112,26 +128,36 @@ package "dao" {
   class ConexionBD {
     + {static} obtener() : Connection
   }
-  class AlumnoDAO {
+  interface AlumnoDAO <<interface>> {
     + listarActivos() : List<Alumno>
   }
-  class MisionDAO {
+  interface MisionDAO <<interface>> {
     + listarPorFranja(idFranja) : List<Mision>
     + obtenerLeccion(idMision) : String
   }
-  class PreguntaDAO {
+  interface PreguntaDAO <<interface>> {
     + listarPorMision(idMision) : List<Pregunta>
   }
-  class ActividadDAO {
+  interface ActividadDAO <<interface>> {
     + listarPorMision(idMision) : List<ActividadInteractiva>
-    - crearActividad(tipo, ...) : ActividadInteractiva
   }
-  class ProgresoDAO {
+  interface ProgresoDAO <<interface>> {
     + registrarCuestionario(idAlumno, idMision, correctas) : void
+    + obtenerResultadoCuestionario(idAlumno, idMision) : Integer
     + registrarActividad(idAlumno, idMision, idActividad, correcta) : void
+    + actividadesCorrectas(idAlumno, idMision) : List<Integer>
     + marcarCompletada(idAlumno, idMision) : void
     + resumenPorAlumno() : List<ResumenProgreso>
+    + resumenDe(idAlumno) : ResumenProgreso
+    + detallePorMision(idAlumno) : List<DetalleMision>
   }
+  class AlumnoDAOJdbc
+  class MisionDAOJdbc
+  class PreguntaDAOJdbc
+  class ActividadDAOJdbc {
+    - crearActividad(tipo, ...) : ActividadInteractiva
+  }
+  class ProgresoDAOJdbc
 }
 
 package "util" {
@@ -139,40 +165,65 @@ package "util" {
     + {static} ordenarPorInsercion(lista, criterio) : void
     + {static} buscarBinario(lista, buscado, criterio) : int
   }
+  class ExportadorCSV <<utility>> {
+    + {static} SEPARADOR : String = ";"
+    + {static} ENCABEZADOS : String[]
+    + {static} armarFilas(detalle) : ArrayList<String[]>
+    + {static} escribir(destino, encabezados, filas) : void
+  }
 }
 
 ActividadOrdenar --|> ActividadInteractiva
 ActividadUnir --|> ActividadInteractiva
 ActividadCompletar --|> ActividadInteractiva
 ContenidoInvalidoException --|> Exception
+PersistenciaException --|> Exception
 
 Mision "1" *-- "3" Pregunta
 Mision "1" *-- "3..5" ActividadInteractiva
 
 ConsolaApp --> RutaController : usa
 ConsolaApp ..> ActividadInteractiva : solo la abstracta
-RutaController --> "1" AlumnoDAO
-RutaController --> "1" MisionDAO
-RutaController --> "1" PreguntaDAO
-RutaController --> "1" ActividadDAO
-RutaController --> "1" ProgresoDAO
+note right of ConsolaApp
+  Cableado: crea las cinco
+  implementaciones ...DAOJdbc
+  y se las inyecta a RutaController
+end note
+
+RutaController --> "1" AlumnoDAO : inyectado
+RutaController --> "1" MisionDAO : inyectado
+RutaController --> "1" PreguntaDAO : inyectado
+RutaController --> "1" ActividadDAO : inyectado
+RutaController --> "1" ProgresoDAO : inyectado
 RutaController ..> Algoritmos : ordena y busca
+RutaController ..> ExportadorCSV : exporta
 RutaController --> "0..*" ActividadInteractiva : cola de pendientes
 RutaController ..> ResultadoCuestionario
 RutaController ..> ResultadoRespuesta
 
-AlumnoDAO ..> ConexionBD
-MisionDAO ..> ConexionBD
-PreguntaDAO ..> ConexionBD
-ActividadDAO ..> ConexionBD
-ProgresoDAO ..> ConexionBD
+AlumnoDAOJdbc ..|> AlumnoDAO
+MisionDAOJdbc ..|> MisionDAO
+PreguntaDAOJdbc ..|> PreguntaDAO
+ActividadDAOJdbc ..|> ActividadDAO
+ProgresoDAOJdbc ..|> ProgresoDAO
 
-AlumnoDAO ..> Alumno : crea
-MisionDAO ..> Mision : crea
-PreguntaDAO ..> Pregunta : crea
-ActividadDAO ..> ActividadInteractiva : crea (Factory)
-ProgresoDAO ..> ResumenProgreso : crea
+AlumnoDAOJdbc ..> ConexionBD
+MisionDAOJdbc ..> ConexionBD
+PreguntaDAOJdbc ..> ConexionBD
+ActividadDAOJdbc ..> ConexionBD
+ProgresoDAOJdbc ..> ConexionBD
+
+AlumnoDAOJdbc ..> Alumno : crea
+MisionDAOJdbc ..> Mision : crea
+PreguntaDAOJdbc ..> Pregunta : crea
+ActividadDAOJdbc ..> ActividadInteractiva : crea (Factory)
+ProgresoDAOJdbc ..> ResumenProgreso : crea
+ProgresoDAOJdbc ..> DetalleMision : crea
+ExportadorCSV ..> DetalleMision : lee
+
+ProgresoDAO ..> PersistenciaException : lanza (los 5 DAO,\nenvolviendo la SQLException)
 
 Mision ..> ContenidoInvalidoException : lanza
-ActividadDAO ..> ContenidoInvalidoException : lanza
+ActividadDAOJdbc ..> ContenidoInvalidoException : lanza
+PreguntaDAOJdbc ..> ContenidoInvalidoException : lanza
 @enduml
