@@ -33,6 +33,24 @@ muestra una pista y la actividad vuelve a aparecer más adelante; escribir `sali
 Misión se completa al terminar sus actividades. La opción 6 muestra el progreso propio y la 7, el del docente (ordenado por
 nombre o por Misiones completadas, y búsqueda por nombre). Solo la Misión 1 de la franja de 7 a 10 años tiene contenido cargado.
 
+## Entrega 4 (TP4, versión final)
+Se agregó sobre la Entrega 3:
+- **`PersistenciaException`**: los DAO capturan la `SQLException` y la relanzan con un mensaje en español; con MySQL apagado
+  el usuario ve, por ejemplo, `No se pudo obtener la lista de alumnos`, sin stack trace.
+- **Interfaces DAO** (`AlumnoDAO`, `MisionDAO`, `PreguntaDAO`, `ActividadDAO`, `ProgresoDAO`) con implementaciones `...DAOJdbc`,
+  inyectadas por constructor en `RutaController`.
+- **Exportación a CSV** con arreglos y `ArrayList` de forma complementaria (`util/ExportadorCSV`): encabezados fijos en un
+  `String[]` y filas en un `ArrayList<String[]>`.
+- Dónde está cada cosa: `docs/mapa-rubrica-codigo-tp4.md`.
+
+**Opción 8 del menú, "Exportar mi progreso a CSV"**: elegir un perfil (opción 1) y después la 8. Genera
+`exportaciones/progreso-alumno-{id}.csv` (una fila por Misión: nota del cuestionario, si está completada, fecha y actividades
+correctas), con separador `;` y UTF-8 con BOM para abrirlo en Excel. La carpeta `exportaciones/` no se versiona.
+
+**Video de la demostración:** _(pendiente: pegar acá el enlace)_
+
+**Mejora futura:** la conexión (URL, usuario y clave) sigue en `dao/ConexionBD.java`; se podría leer de un `config.properties`.
+
 ## Diagramas
 Los `.puml` son la fuente y los `.png` se regeneran con PlantUML (requiere Graphviz). `plantuml.jar` va en `tools/`, fuera del
 classpath del programa, y no se versiona:
