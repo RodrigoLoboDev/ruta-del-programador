@@ -45,11 +45,21 @@ public class RutaController {
         return porMisiones != 0 ? porMisiones : POR_NOMBRE.compare(a, b);
     };
 
-    private final AlumnoDAO alumnoDAO = new AlumnoDAO();
-    private final MisionDAO misionDAO = new MisionDAO();
-    private final PreguntaDAO preguntaDAO = new PreguntaDAO();
-    private final ActividadDAO actividadDAO = new ActividadDAO();
-    private final ProgresoDAO progresoDAO = new ProgresoDAO();
+    private final AlumnoDAO alumnoDAO;
+    private final MisionDAO misionDAO;
+    private final PreguntaDAO preguntaDAO;
+    private final ActividadDAO actividadDAO;
+    private final ProgresoDAO progresoDAO;
+
+    /** Los DAO llegan como interfaces (inyección por constructor): el controlador no sabe si hay JDBC detrás. */
+    public RutaController(AlumnoDAO alumnoDAO, MisionDAO misionDAO, PreguntaDAO preguntaDAO,
+                          ActividadDAO actividadDAO, ProgresoDAO progresoDAO) {
+        this.alumnoDAO = alumnoDAO;
+        this.misionDAO = misionDAO;
+        this.preguntaDAO = preguntaDAO;
+        this.actividadDAO = actividadDAO;
+        this.progresoDAO = progresoDAO;
+    }
 
     // Sesión de actividades en curso (CU05): se arma en iniciarActividades y se vacía al terminar o salir.
     private final Queue<ActividadInteractiva> pendientes = new ArrayDeque<>();

@@ -3,6 +3,11 @@ package ar.codersacademy.ruta.vista;
 import ar.codersacademy.ruta.controlador.RutaController;
 import ar.codersacademy.ruta.controlador.RutaController.ResultadoCuestionario;
 import ar.codersacademy.ruta.controlador.RutaController.ResultadoRespuesta;
+import ar.codersacademy.ruta.dao.ActividadDAOJdbc;
+import ar.codersacademy.ruta.dao.AlumnoDAOJdbc;
+import ar.codersacademy.ruta.dao.MisionDAOJdbc;
+import ar.codersacademy.ruta.dao.PreguntaDAOJdbc;
+import ar.codersacademy.ruta.dao.ProgresoDAOJdbc;
 import ar.codersacademy.ruta.modelo.ActividadInteractiva;
 import ar.codersacademy.ruta.modelo.Alumno;
 import ar.codersacademy.ruta.modelo.ContenidoInvalidoException;
@@ -21,7 +26,9 @@ import java.util.Scanner;
  * Menú principal con los casos de uso CU01 a CU09; las reglas viven en el controlador.
  */
 public class ConsolaApp {
-    private static final RutaController ctrl = new RutaController();
+    // Único lugar que conoce las implementaciones JDBC: acá se arma el cableado.
+    private static final RutaController ctrl = new RutaController(new AlumnoDAOJdbc(), new MisionDAOJdbc(),
+            new PreguntaDAOJdbc(), new ActividadDAOJdbc(), new ProgresoDAOJdbc());
     private static final Scanner in = new Scanner(System.in);
 
     // El detalle técnico de ContenidoInvalidoException no se muestra: la usa un chico, no un desarrollador.
